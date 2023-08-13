@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, MetaData
 
-engine = create_engine( 'mysql+mysqlconnector://root:aztektec321@192.168.1.7/facturacion' )
+engine = create_engine( 'mysql+mysqlconnector://root:FactV4.0@localhost/facturacion' )
 
 meta = MetaData()
 
