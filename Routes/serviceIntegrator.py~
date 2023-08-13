@@ -1,0 +1,44 @@
+from fastapi import APIRouter, Response, status
+from Config.db import conn
+# from Models.coin import coin as coinModel
+from Schemas.stamped import Stamped
+# from starlette.status import HTTP_204_NO_CONTENT
+from Services.CreationFiles.createXml import CreateXml
+from ServiceSoap import ServiceSoap
+
+service = APIRouter()
+
+@service.post( "/timbrado", tags=["ServiceIntegrator"] )
+def getStamped( schemaStamped: dict ):
+    CreateXml( schemaStamped, "timbrado.xml" )
+    return SoapService( schemaStamped, "timbrado.xml", "timbrado" )
+
+@service.get( "/complemento", tags=["ServiceIntegrator"] )
+def getComplement( schemaComplement ):
+    print( schemaComplement )
+
+@service.get( "/notacredito", tags=["ServiceIntegrator"] )
+def getCreditNote( schemaCreditNote: dict ):
+    CreateXml( schemaCreditNote, "notaCredito.xml" )
+    return SoapService( schemaCreditNote, "notaCredito.xml", "timbrado" )
+
+@service.get( "/cancelacion", tags=["ServiceIntegrator"] )
+def getCancellation( schemaCancellation ):
+    print( schemaCancellation )
+
+
+def SoapService( schema, nameFile, event ):
+    try:
+        # response = ServiceSoap.service( "https://pruebas.timbracfdi33.mx/Timbrado.asmx?wsdl", "mvpNUXmQfK8=" )
+        # response = ServiceSoap.service( schema['URLServicioFacturacion'], schema['UsuarioIntegrador'], "xmlTimbrado.xml", "timbrado" )
+        response = ServiceSoap.service( 
+            schema['URLServicioFacturacion'], 
+            "mvpNUXmQfK8=",#schema['UsuarioIntegrador'],#"mvpNUXmQfK8=", 
+            nameFile, 
+            event
+        )
+    except Exception as e:
+        print( e )
+        response = e
+    
+    return response
